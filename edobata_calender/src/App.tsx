@@ -80,7 +80,6 @@ export default function App() {
         const weekday = current.getDay();
 
         const baseColor = weekday === 0 ? 'text-red-500' : weekday === 6 ? 'text-blue-500' : 'text-gray-700';
-
         const textColor = inMonth ? baseColor : 'text-gray-300 opacity-70';
 
         days.push(
@@ -119,11 +118,13 @@ export default function App() {
     const controls = document.getElementById('ui-controls');
     if (arrows) arrows.style.display = 'none';
     if (controls) controls.style.display = 'none';
+
     if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
       html2canvas(canvasRef.current, {
         scale: 3,
-        width: 402,
-        height: 600,
+        width: rect.width,
+        height: rect.height,
         backgroundColor: '#ffffff',
       }).then((canvas) => {
         const link = document.createElement('a');
@@ -159,7 +160,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center px-4 py-4 font-serif">
-      <div className="w-[402px] h-[600px] mx-auto pt-14 pb-8 border border-gray-300 shadow" ref={canvasRef}>
+      <div className="w-full max-w-[402px] mx-auto pt-14 pb-8 border border-gray-300 shadow" ref={canvasRef}>
         <div className="flex justify-between items-center mb-2 px-4" id="arrows">
           <button onClick={() => setMonth((prev) => (prev === 0 ? (setYear((y) => y - 1), 11) : prev - 1))}>
             &larr;
