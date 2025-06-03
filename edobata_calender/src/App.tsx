@@ -120,17 +120,31 @@ export default function App() {
     if (controls) controls.style.display = 'none';
 
     if (canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect();
       html2canvas(canvasRef.current, {
         scale: 3,
-        width: rect.width,
-        height: rect.height,
+        width: 402,
+        height: 600,
         backgroundColor: '#ffffff',
       }).then((canvas) => {
+        const dataURL = canvas.toDataURL();
+
+        // ダウンロードリンクも残す（PC向け）
         const link = document.createElement('a');
         link.download = `calendar-${year}-${month + 1}.png`;
-        link.href = canvas.toDataURL();
+        link.href = dataURL;
         link.click();
+
+        // プレビュー表示（iOS向け）
+        const preview = document.getElementById('preview');
+        if (preview) {
+          preview.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = dataURL;
+          img.alt = 'Exported Calendar';
+          img.className = 'mt-4 border w-full';
+          preview.appendChild(img);
+        }
+
         if (arrows) arrows.style.display = 'flex';
         if (controls) controls.style.display = 'flex';
       });
@@ -160,7 +174,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center px-4 py-4 font-serif">
-      <div className="w-full max-w-[402px] mx-auto pt-14 pb-8 border border-gray-300 shadow" ref={canvasRef}>
+      <div className="w-[402px] h-[600px] mx-auto pt-14 pb-8 border border-gray-300 shadow" ref={canvasRef}>
         <div className="flex justify-between items-center mb-2 px-4" id="arrows">
           <button onClick={() => setMonth((prev) => (prev === 0 ? (setYear((y) => y - 1), 11) : prev - 1))}>
             &larr;
@@ -234,6 +248,8 @@ export default function App() {
           </button>
         </div>
       </div>
+
+      <div id="preview" className="w-full max-w-[402px] mt-6" />
     </div>
   );
 }
