@@ -79,7 +79,7 @@ export default function App() {
         const isSingleDigit = dateStr.length === 1;
         const weekday = current.getDay();
 
-        const baseColor = weekday === 0 ? 'text-red-500' : weekday === 6 ? 'text-blue-500' : 'text-gray-700';
+        const baseColor = weekday === 0 ? 'text-red-500' : weekday === 6 ? 'text-blue-500' : 'text-gray-650';
         const textColor = inMonth ? baseColor : 'text-gray-300 opacity-70';
 
         days.push(
@@ -118,33 +118,17 @@ export default function App() {
     const controls = document.getElementById('ui-controls');
     if (arrows) arrows.style.display = 'none';
     if (controls) controls.style.display = 'none';
-
     if (canvasRef.current) {
       html2canvas(canvasRef.current, {
         scale: 3,
-        width: 402,
-        height: 600,
+        width: 420,
+        height: 650,
         backgroundColor: '#ffffff',
       }).then((canvas) => {
-        const dataURL = canvas.toDataURL();
-
-        // ダウンロードリンクも残す（PC向け）
         const link = document.createElement('a');
         link.download = `calendar-${year}-${month + 1}.png`;
-        link.href = dataURL;
+        link.href = canvas.toDataURL();
         link.click();
-
-        // プレビュー表示（iOS向け）
-        const preview = document.getElementById('preview');
-        if (preview) {
-          preview.innerHTML = '';
-          const img = document.createElement('img');
-          img.src = dataURL;
-          img.alt = 'Exported Calendar';
-          img.className = 'mt-4 border w-full';
-          preview.appendChild(img);
-        }
-
         if (arrows) arrows.style.display = 'flex';
         if (controls) controls.style.display = 'flex';
       });
@@ -174,8 +158,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center px-4 py-4 font-serif">
-      <div className="w-[402px] h-[600px] mx-auto pt-14 pb-8 border border-gray-300 shadow" ref={canvasRef}>
-        <div className="flex justify-between items-center mb-2 px-4" id="arrows">
+      <div
+        className="w-[420px] h-[650px] mx-auto pt-14 pb-8 border border-gray-300 shadow relative bg-white overflow-hidden"
+        ref={canvasRef}
+      >
+        <img
+          src="public\2023_11月以降の江戸端ロゴデータ.png"
+          alt="背景"
+          className="absolute inset-0 w-full h-full object-contain scale-125 pointer-events-none"
+        />
+
+        <div className="flex justify-between items-center mb-2 px-4 relative z-10" id="arrows">
           <button onClick={() => setMonth((prev) => (prev === 0 ? (setYear((y) => y - 1), 11) : prev - 1))}>
             &larr;
           </button>
@@ -184,12 +177,12 @@ export default function App() {
           </button>
         </div>
 
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 relative z-10">
           <div className="text-red-500 text-sm">{year}</div>
           <div className="text-3xl font-bold tracking-wide mt-4">{month + 1}月の営業日</div>
         </div>
 
-        <div className="flex justify-center gap-1 mb-1 text-sm text-gray-700">
+        <div className="flex justify-center gap-1 mb-1 text-sm text-gray-650 relative z-10">
           {weekdays.map((d) => (
             <div key={d} className="w-10 text-center">
               {d}
@@ -197,9 +190,9 @@ export default function App() {
           ))}
         </div>
 
-        {renderCalendar()}
+        <div className="relative z-10">{renderCalendar()}</div>
 
-        <div className="mt-5 text-base text-gray-800 text-right pr-14">
+        <div className="mt-5 text-base text-gray-800 text-right pr-14 relative z-10">
           {editing ? (
             <textarea
               className="w-full text-right text-base leading-relaxed resize-none outline-none font-serif"
@@ -248,8 +241,6 @@ export default function App() {
           </button>
         </div>
       </div>
-
-      <div id="preview" className="w-full max-w-[402px] mt-6" />
     </div>
   );
 }
