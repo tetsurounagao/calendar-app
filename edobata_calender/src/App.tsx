@@ -163,7 +163,7 @@ export default function App() {
         ref={canvasRef}
       >
         <img
-          src="public\2023_11月以降の江戸端ロゴデータ.png"
+          src="\2023_11月以降の江戸端ロゴデータ.png"
           alt="背景"
           className="absolute inset-0 w-full h-full object-contain scale-125 pointer-events-none"
         />
