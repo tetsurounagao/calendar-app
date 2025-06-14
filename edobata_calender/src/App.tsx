@@ -21,6 +21,7 @@ export default function App() {
   });
   const [note, setNote] = useState(localStorage.getItem('note') || 'Wed, Thu, Sun 11:30-19:00\nFri, Sat 11:30-22:00');
   const [phone, setPhone] = useState(localStorage.getItem('phone') || '080-9675-5426');
+  const [exportedImageUrl, setExportedImageUrl] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -125,10 +126,14 @@ export default function App() {
         height: 650,
         backgroundColor: '#ffffff',
       }).then((canvas) => {
+        const dataUrl = canvas.toDataURL();
+        setExportedImageUrl(dataUrl);
+
         const link = document.createElement('a');
         link.download = `calendar-${year}-${month + 1}.png`;
-        link.href = canvas.toDataURL();
+        link.href = dataUrl;
         link.click();
+
         if (arrows) arrows.style.display = 'flex';
         if (controls) controls.style.display = 'flex';
       });
@@ -241,6 +246,13 @@ export default function App() {
           </button>
         </div>
       </div>
+
+      {exportedImageUrl && (
+        <div className="mt-6">
+          <div className="text-sm text-gray-600 mb-2 text-center">画像を長押しして保存できます</div>
+          <img src={exportedImageUrl} alt="書き出されたカレンダー" className="w-[300px] border shadow-md" />
+        </div>
+      )}
     </div>
   );
 }
